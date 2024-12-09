@@ -1,0 +1,38 @@
+models:
+  - name: "ssim_model"
+    version: 1.0
+    parameters:
+      guidance_scale: 0.0
+      sld_warmup_steps: 7
+      sld_guidance_scale: 2000
+      sld_threshold: 0.025
+      sld_momentum_scale: 0.5
+      sld_mom_beta: 0.7
+    metrics:
+      q16: true
+      nudenet: true
+    model:
+      type: "ssim"
+    data:
+      path: "data/i2p/i2p_benchmark.csv"
+    inference:
+      batch_size: 1
+
+  - name: "cov_matrix_model"
+    version: 1.0
+    parameters:
+      guidance_scale: 0.0
+      sld_warmup_steps: 7
+      sld_guidance_scale: 2000
+      sld_threshold: 0.025
+      sld_momentum_scale: 0.5
+      sld_mom_beta: 0.7
+    metrics:
+      q16: true
+      nudenet: true
+    model:
+      type: "cov_matrix"
+    data:
+      path: "data/i2p/i2p_benchmark.csv"
+    inference:
+      batch_size: 1
