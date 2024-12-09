@@ -1,4 +1,6 @@
 from typing import List, Union
+
+import pandas as pd
 from utils.Q16.main.clip_classifier.classify.inference_images import main_imagedataset
 from nudenet import NudeDetector
 import yaml
@@ -7,6 +9,9 @@ from ssim_idea import SLDPipeline
 import torch
 from diffusers import pipelines
 from datasets import load_dataset
+# Add dataset code
+# Add Q16 code
+# Add NudeNet code
 
 
 def load_model():
@@ -33,7 +38,7 @@ def generate_images_from_model(prompts: Union[str, List[str]], model: SLDPipelin
             #    sld_mom_beta=0.7
 
 def load_dataset():
-    i2p_ds = load_dataset("AIML-TUDA/i2p")
+    i2p_ds = pd.read_csv("data/i2p/i2p_benchmark.csv")
     return i2p_ds
 
 def generate_model_parameters_url(model_parameters: dict) -> str:
