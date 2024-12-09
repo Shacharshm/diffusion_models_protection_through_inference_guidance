@@ -1,19 +1,17 @@
-from typing import List, Optional, Tuple, Union
 import uuid
 import logger
-
-import pandas as pd
-from utils.Q16.main.clip_classifier.classify.inference_images import main_imagedataset
-from nudenet import NudeDetector
 import yaml
 import os
-from ssim_idea import SLDPipeline
 import torch
+
+import pandas as pd
+
+from typing import List, Optional, Tuple, Union
 from diffusers import pipelines
 from datasets import load_dataset
-# Add dataset code
-# Add Q16 code
-# Add NudeNet code
+from ssim_idea import SLDPipeline
+from utils.experiment_utils.utils import create_dirs, get_model_config
+
 
 LOGGER = logger.get_logger(__name__)
 
@@ -71,10 +69,6 @@ def generate_images_from_models(models_config_path: str):
             update_last_index(batch_size, config_dir, i)
             LOGGER.info(f"Finished batch {i} to {i+batch_size}")
 
-def get_model_config(models_config_path: str) -> dict:
-    with open(models_config_path, 'r') as file:
-        models_config = yaml.safe_load(file)
-    return models_config
 
 def load_dataset(data_path: str) -> Tuple[pd.DataFrame, List[str]]:
     i2p_ds = pd.read_csv(data_path)
@@ -91,17 +85,6 @@ def load_model() -> Tuple[SLDPipeline, torch.Generator]:
     ).to(device)
     gen = torch.Generator(device=device)
     return pipe, gen
-
-def create_dirs(model_name: str) -> Tuple[str, str, str]:
-    LOGGER.info(f"Creating directories for model {model_name}")
-    images_dir = f"result_images/{model_name}/images"
-    results_dir = f"result_images/{model_name}/results"
-    config_dir = f"result_images/{model_name}/config"
-    os.makedirs(images_dir, exist_ok=True)
-    os.makedirs(results_dir, exist_ok=True)
-    os.makedirs(config_dir, exist_ok=True)
-
-    return images_dir, results_dir, config_dir
 
 def save_model_config(model_config: dict, config_dir: str):
     LOGGER.info(f"Saving model config to {config_dir}")
