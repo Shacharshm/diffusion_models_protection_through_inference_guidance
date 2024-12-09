@@ -6,6 +6,7 @@ import torch
 
 import pandas as pd
 
+from tqdm import tqdm
 from typing import List, Optional, Tuple, Union
 from diffusers import pipelines
 from datasets import load_dataset
@@ -56,7 +57,7 @@ def generate_images_from_models(models_config_path: str):
         last_index = get_or_create_last_index(config_dir)
 
         LOGGER.info(f"Starting inference for model {model_name}")
-        for i in range(last_index, len(dataset), batch_size):
+        for i in tqdm(range(last_index, len(dataset), batch_size)):
             LOGGER.info(f"Processing batch {i} to {i+batch_size}")
             batch = get_batch(batch_size, dataset, i)
 
@@ -64,7 +65,7 @@ def generate_images_from_models(models_config_path: str):
             results_df = pd.DataFrame(results)
             
             LOGGER.info(f"Saving images and results for batch {i} to {i+batch_size}")
-            save_images(image_dir, results_df)
+            results_df = save_images(image_dir, results_df)
             save_results(results_dir, i, results_df)
             update_last_index(batch_size, config_dir, i)
             LOGGER.info(f"Finished batch {i} to {i+batch_size}")
@@ -144,12 +145,13 @@ def generate_images_from_model(prompts: Union[str, List[str]], model: SLDPipelin
             #    sld_momentum_scale=0.5,
             #    sld_mom_beta=0.7
 
-def save_images(image_dir: str, results_df: pd.DataFrame):
+def save_images(image_dir: str, results_df: pd.DataFrame) -> pd.DataFrame:
     LOGGER.info(f"Saving images to {image_dir}")
     for row in results_df.iterrows():
         row = row[1]
         row['image'].save(f"{image_dir}/{row['image_id']}.png")
     results_df.drop(columns='image', inplace=True)
+    return results_df
 
 def save_results(results_dir: str, i: int, results_df: pd.DataFrame):
     LOGGER.info(f"Saving results to {results_dir}")
